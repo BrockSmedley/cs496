@@ -11,7 +11,7 @@ info:
   license:
     name: "Apache 2.0"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "changeme.gce.idk"
+host: "8080-dot-4071604-dot-devshell.appspot.com"
 basePath: "/v1"
 tags:
 - name: "boat"
