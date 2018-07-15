@@ -1,0 +1,339 @@
+---
+swagger: "2.0"
+info:
+  description: "This is a swagger spec for the marina database API. For this sample,\
+    \ you can use the api key `special-key` to test the authorization filters."
+  version: "1.0.0"
+  title: "Swaggy Marina"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "smedleyb@oregonsatte.edu"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "changeme.gce.idk"
+basePath: "/v1"
+tags:
+- name: "boat"
+  description: "Information about boats registered with the marina."
+  externalDocs:
+    description: "Find out more"
+    url: "http://swagger.io"
+- name: "slip"
+  description: "Access to marina boat storage info."
+schemes:
+- "https"
+- "http"
+paths:
+  /boat:
+    post:
+      tags:
+      - "boat"
+      summary: "Add a new boat to the marina"
+      description: ""
+      operationId: "add_boat"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Boat object that needs to be added to the marina"
+        required: true
+        schema:
+          $ref: "#/definitions/Boat"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "swagger_server.controllers.boat_controller"
+    put:
+      tags:
+      - "boat"
+      summary: "Update an existing boat"
+      description: ""
+      operationId: "update_boat"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Boat object that needs to be updated"
+        required: true
+        schema:
+          $ref: "#/definitions/Boat"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Boat not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.boat_controller"
+  /boat/findByStatus:
+    get:
+      tags:
+      - "boat"
+      summary: "Finds boats by status"
+      description: "Multiple status values can be provided with comma separated strings"
+      operationId: "find_boats_by_status"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "status"
+        in: "query"
+        description: "Status values that need to be considered for filter"
+        required: true
+        type: "array"
+        items:
+          type: "string"
+          default: "at_sea"
+          enum:
+          - "docked"
+          - "at_sea"
+        collectionFormat: "multi"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Boat"
+        400:
+          description: "Invalid status value"
+      x-swagger-router-controller: "swagger_server.controllers.boat_controller"
+  /boat/{boatId}:
+    get:
+      tags:
+      - "boat"
+      summary: "Find boat by ID"
+      description: "Returns a single boat"
+      operationId: "get_boat_by_id"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "boatId"
+        in: "path"
+        description: "ID of boat to return"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Boat"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Boat not found"
+      x-swagger-router-controller: "swagger_server.controllers.boat_controller"
+    delete:
+      tags:
+      - "boat"
+      summary: "Deletes a boat"
+      description: ""
+      operationId: "delete_boat"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "boatId"
+        in: "path"
+        description: "Boat id to delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Boat not found"
+      x-swagger-router-controller: "swagger_server.controllers.boat_controller"
+  /slip:
+    get:
+      tags:
+      - "slip"
+      summary: "Returns slips by status"
+      description: "Returns a map of status codes to slips"
+      operationId: "get_slips"
+      produces:
+      - "application/json"
+      parameters: []
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "object"
+            additionalProperties:
+              type: "integer"
+              format: "int64"
+      x-swagger-router-controller: "swagger_server.controllers.slip_controller"
+    post:
+      tags:
+      - "slip"
+      summary: "Add a new slip to the marina"
+      description: ""
+      operationId: "add_slip"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Slip object that needs to be added to the marina"
+        required: true
+        schema:
+          $ref: "#/definitions/Slip"
+      responses:
+        405:
+          description: "Invalid input"
+      x-swagger-router-controller: "swagger_server.controllers.slip_controller"
+    put:
+      tags:
+      - "slip"
+      summary: "Update an existing slip"
+      description: ""
+      operationId: "update_slip"
+      consumes:
+      - "application/json"
+      - "application/xml"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Slip object that needs to be updated"
+        required: true
+        schema:
+          $ref: "#/definitions/Slip"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Slip not found"
+        405:
+          description: "Validation exception"
+      x-swagger-router-controller: "swagger_server.controllers.slip_controller"
+  /slip/{slipId}:
+    get:
+      tags:
+      - "slip"
+      summary: "Check slip by ID"
+      description: "Returns boat occupying a slip"
+      operationId: "get_slip_by_id"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "slipId"
+        in: "path"
+        description: "ID of slip to return"
+        required: true
+        type: "string"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/Slip"
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Slip not found"
+      x-swagger-router-controller: "swagger_server.controllers.slip_controller"
+    delete:
+      tags:
+      - "slip"
+      summary: "Deletes a slip"
+      description: ""
+      operationId: "delete_slip"
+      produces:
+      - "application/xml"
+      - "application/json"
+      parameters:
+      - name: "slipId"
+        in: "path"
+        description: "Slip id to delete"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        400:
+          description: "Invalid ID supplied"
+        404:
+          description: "Slip not found"
+      x-swagger-router-controller: "swagger_server.controllers.slip_controller"
+definitions:
+  Boat:
+    type: "object"
+    required:
+    - "at_sea"
+    - "length"
+    - "name"
+    - "type"
+    properties:
+      id:
+        type: "string"
+        example: "abc123"
+      name:
+        type: "string"
+        example: "Sea Witch"
+      length:
+        type: "integer"
+        format: "int64"
+        example: 25
+      at_sea:
+        type: "boolean"
+        description: "false if boat is docked"
+      type:
+        type: "string"
+        example: "catamaran"
+        description: "boat type"
+    example:
+      at_sea: true
+      name: "Sea Witch"
+      length: 25
+      id: "abc123"
+      type: "catamaran"
+    xml:
+      name: "Boat"
+  Slip:
+    type: "object"
+    required:
+    - "arrival_date"
+    - "current_boat"
+    - "number"
+    properties:
+      id:
+        type: "string"
+        example: "123abc"
+      number:
+        type: "integer"
+        format: "int64"
+        example: 5
+      current_boat:
+        type: "string"
+        example: "abc666"
+      arrival_date:
+        type: "string"
+        example: "1/2/2013"
+    example:
+      number: 5
+      current_boat: "abc666"
+      id: "123abc"
+      arrival_date: "1/2/2013"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
