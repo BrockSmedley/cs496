@@ -1,5 +1,6 @@
 import connexion
 import six
+from google.cloud import datastore
 
 from swagger_server.models.boat import Boat  # noqa: E501
 from swagger_server import util
@@ -30,7 +31,7 @@ def delete_boat(boatId):  # noqa: E501
 
     :rtype: None
     """
-    return 'do some magic!'
+    return 'do some magic you bitch'
 
 
 def find_boats_by_status(status):  # noqa: E501
