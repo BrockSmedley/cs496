@@ -142,4 +142,4 @@ def update_boat(body):  # noqa: E501
     print ("saved boat")
 
 
-    return bj['id']
+    return boat
