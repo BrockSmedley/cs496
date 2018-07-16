@@ -134,6 +134,8 @@ def update_slip(body):  # noqa: E501
     # update the slip
     slip_key = mutil.get_key("slip", iid)
     sent = client.get(slip_key)
+    if (sent['current_boat'] != ""):
+        return ("403: Slip is occupied")
     sent['arrival_date'] = arr
     sent['current_boat'] = cbt
     client.put(sent)

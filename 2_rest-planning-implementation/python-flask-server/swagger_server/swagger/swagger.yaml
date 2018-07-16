@@ -71,6 +71,8 @@ paths:
       responses:
         400:
           description: "Invalid ID supplied"
+        403:
+          description: "Slip is full"
         404:
           description: "Boat not found"
         405:
