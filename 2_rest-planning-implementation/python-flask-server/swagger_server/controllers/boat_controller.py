@@ -3,19 +3,11 @@ import six
 import json
 from google.cloud import datastore
 
+from util import util as mutil
+
 from swagger_server.models.boat import Boat  # noqa: E501
 from swagger_server import util
 
-
-def decode_body(body):
-    # decode binary data from body into a dict
-    bs = body.decode('utf8')
-    bj = json.loads(bs)
-    return bj
-
-def get_key(kind, iid):
-    client = datastore.Client()
-    return client.key(kind, iid)
 
 def add_boat(body):  # noqa: E501
     """Add a new boat to the marina
@@ -28,23 +20,25 @@ def add_boat(body):  # noqa: E501
     :rtype: None
     """
 
-    bj = decode_body(body)
+    bj = mutil.decode_body(body)
     
     # create entity key
     client = datastore.Client()
-    boat_key = get_key("boat", bj['id'])
+    keystr = mutil.generate_id()
+    boat_key = mutil.get_key("boat", keystr)
 
     boat = datastore.Entity(key = boat_key)
     boat['name'] = bj['name']
     boat['length'] = bj['length']
     boat['at_sea'] = True
     boat['type'] = bj['type']
+    boat['id'] = keystr;
 
     client.put(boat)
     print ("saved boat")
 
 
-    return bj['id']
+    return boat
 
 def delete_boat(boatId):  # noqa: E501
     """Deletes a boat
@@ -60,7 +54,7 @@ def delete_boat(boatId):  # noqa: E501
     print (boatId)
 
     client = datastore.Client()
-    boat_key = get_key("boat", boatId)
+    boat_key = mutil.get_key("boat", boatId)
     
     client.delete(boat_key)
 
@@ -93,7 +87,7 @@ def find_boats_by_status(status):  # noqa: E501
     for ent in query_iter:
         out.append(ent)
 
-    return str(out)
+    return out
 
 
 def get_boat_by_id(boatId):  # noqa: E501
@@ -107,7 +101,7 @@ def get_boat_by_id(boatId):  # noqa: E501
     :rtype: Boat
     """
     client = datastore.Client()
-    boat_key = get_key("boat", boatId)
+    boat_key = mutil.get_key("boat", boatId)
 
     return client.get(boat_key)
 
@@ -126,10 +120,10 @@ def update_boat(body):  # noqa: E501
 #        body = Boat.from_dict(connexion.request.get_json())  # noqa: E501
     
     client = datastore.Client()
-    bj = decode_body(body)
+    bj = mutil.decode_body(body)
     boatId = bj['id']
 
-    boat_key = get_key("boat", boatId)
+    boat_key = mutil.get_key("boat", boatId)
 
     boat = datastore.Entity(key = boat_key)
     boat['name'] = bj['name']
