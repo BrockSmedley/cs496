@@ -51,10 +51,17 @@ def delete_boat(boatId):  # noqa: E501
     :rtype: None
     """
     
-    print (boatId)
-
     client = datastore.Client()
     boat_key = mutil.get_key("boat", boatId)
+
+    # find slip assoc. with boat
+    query = client.query(kind="slip")
+    query.add_filter('current_boat', '=', boatId)
+
+    qi = query.fetch()
+    for i in qi:
+        i['current_boat'] = ""
+        client.put(i)
     
     client.delete(boat_key)
 
