@@ -61,8 +61,16 @@ def delete_slip(slipId):  # noqa: E501
 
     client = datastore.Client()
     slip_key = mutil.get_key("slip", slipId)
-    client.delete(slip_key)
+    slip = client.get(slip_key)
+    
+    # send out boat to sea before slip delete
+    boat_key = mutil.get_key("boat", slip['current_boat'])
+    if (boat_key):
+        boat = client.get(boat_key)
+        boat['at_sea'] = True
+        client.put(boat)
 
+    client.delete(slip_key)
     return ('deleted slip %s' % slipId)
 
 
